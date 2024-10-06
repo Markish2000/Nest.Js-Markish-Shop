@@ -13,34 +13,32 @@ import {
 import { ProductsService } from './products.service';
 
 import { CreateProductDto, UpdateProductDto } from './dto';
-import { PaginationDto } from 'src/common/dtos';
-
-import { Product } from './entities';
+import { PaginationDto } from '../common/dtos';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  create(@Body() createProductDto: CreateProductDto): Promise<Product> {
+  create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto): Promise<Product[]> {
+  findAll(@Query() paginationDto: PaginationDto) {
     return this.productsService.findAll(paginationDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Product> {
-    return this.productsService.findOne(id);
+  @Get(':term')
+  findOne(@Param('term', ParseUUIDPipe) term: string) {
+    return this.productsService.findOnePlain(term);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProductDto: UpdateProductDto,
-  ): Promise<Product> {
+  ) {
     return this.productsService.update(id, updateProductDto);
   }
 

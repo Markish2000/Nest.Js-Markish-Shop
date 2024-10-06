@@ -3,23 +3,35 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsArray, IsOptional } from 'class-validator';
 
-@Entity()
+import { ProductImage } from './product-image.entity';
+
+@Entity({ name: 'products' })
 export class Product {
+  @Column('text', { nullable: true })
+  description: string;
+
+  @Column('text')
+  gender: string;
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('text', { unique: true })
-  title: string;
+  @OneToMany(() => ProductImage, (productImage) => productImage.product, {
+    cascade: true,
+    eager: true,
+  })
+  images?: ProductImage[];
 
   @Column('float', { default: 0 })
   price: number;
 
-  @Column('text', { nullable: true })
-  description: string;
+  @Column('text', { array: true })
+  sizes: string[];
 
   @Column('text', { unique: true })
   slug: string;
@@ -27,16 +39,13 @@ export class Product {
   @Column('int', { default: 0 })
   stock: number;
 
-  @Column('text', { array: true })
-  sizes: string[];
-
-  @Column('text')
-  gender: string;
-
   @Column('text', { array: true, default: [] })
   @IsArray()
   @IsOptional()
   tags: string[];
+
+  @Column('text', { unique: true })
+  title: string;
 
   @BeforeInsert()
   checkSlugInsert(): void {

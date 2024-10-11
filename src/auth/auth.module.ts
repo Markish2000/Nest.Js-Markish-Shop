@@ -10,10 +10,13 @@ import { AuthController } from './auth.controller';
 
 import { User } from './entities';
 
+import { JwtStrategy } from './strategies';
+
 @Module({
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
   imports: [
+    ConfigModule,
     TypeOrmModule.forFeature([User]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -25,6 +28,6 @@ import { User } from './entities';
       }),
     }),
   ],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, JwtStrategy, JwtModule, PassportModule],
 })
 export class AuthModule {}

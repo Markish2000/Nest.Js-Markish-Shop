@@ -14,17 +14,7 @@ import { CreateUserDto, LoginUserDto } from './dto';
 
 import { User } from './entities';
 
-import { JwtPayload } from './interfaces';
-
-class UserAccount {
-  email: string;
-  fullName: string;
-  id: string;
-  isActive: boolean;
-  password: string;
-  roles: string[];
-  token: string;
-}
+import { JwtPayload, UserAccount } from './interfaces';
 
 @Injectable()
 export class AuthService {
@@ -45,31 +35,37 @@ export class AuthService {
       await this.userRepository.save(user);
       delete user.password;
 
-      return { ...user, token: this.getJwtToken({ email: user.email }) };
+      return { ...user, token: this.getJwtToken({ id: user.id }) };
     } catch (error) {
       this.handleDBErrors(error);
     }
   }
 
   public async login(loginUserDto: LoginUserDto): Promise<UserAccount> {
+    let message: string;
+
     const { email, password } = loginUserDto;
 
     const user = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true },
+      select: { email: true, password: true, id: true },
     });
 
     if (user) {
       if (compareSync(password, user.password)) {
-        return { ...user, token: this.getJwtToken({ email: user.email }) };
+        return { ...user, token: this.getJwtToken({ id: user.id }) };
       }
 
-      const message: string = 'Credentials are not valid (password).';
+      message = 'Credentials are not valid (password).';
       throw new UnauthorizedException(message);
     }
 
-    const message: string = 'Credentials are not valid (email).';
+    message = 'Credentials are not valid (email).';
     throw new UnauthorizedException(message);
+  }
+
+  public async checkStatus(user: User) {
+    return { ...user, token: this.getJwtToken({ id: user.id }) };
   }
 
   private getJwtToken(payload: JwtPayload): string {

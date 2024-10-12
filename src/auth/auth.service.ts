@@ -23,7 +23,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  public async create(createUserDto: CreateUserDto): Promise<UserAccount> {
+  async create(createUserDto: CreateUserDto): Promise<UserAccount> {
     try {
       const { password, ...userData } = createUserDto;
 
@@ -41,7 +41,7 @@ export class AuthService {
     }
   }
 
-  public async login(loginUserDto: LoginUserDto): Promise<UserAccount> {
+  async login(loginUserDto: LoginUserDto): Promise<UserAccount> {
     let message: string;
 
     const { email, password } = loginUserDto;
@@ -64,7 +64,7 @@ export class AuthService {
     throw new UnauthorizedException(message);
   }
 
-  public async checkStatus(user: User) {
+  async checkStatus(user: User) {
     return { ...user, token: this.getJwtToken({ id: user.id }) };
   }
 

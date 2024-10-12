@@ -35,7 +35,7 @@ export class ProductsService {
     private readonly dataSource: DataSource,
   ) {}
 
-  public async create(createProductDto: CreateProductDto, user: User) {
+  async create(createProductDto: CreateProductDto, user: User) {
     try {
       const { images = [], ...productDetails } = createProductDto;
 
@@ -55,7 +55,7 @@ export class ProductsService {
     }
   }
 
-  public async findAll(paginationDto: PaginationDto) {
+  async findAll(paginationDto: PaginationDto) {
     try {
       const { limit = 10, offset = 0 } = paginationDto;
 
@@ -74,7 +74,7 @@ export class ProductsService {
     }
   }
 
-  public async findOne(term: string): Promise<Product> {
+  async findOne(term: string): Promise<Product> {
     try {
       let product: Product;
 
@@ -102,17 +102,13 @@ export class ProductsService {
     }
   }
 
-  public async findOnePlain(term: string) {
+  async findOnePlain(term: string) {
     const { images = [], ...rest } = await this.findOne(term);
 
     return { ...rest, images: images.map((image) => image.url) };
   }
 
-  public async update(
-    id: string,
-    updateProductDto: UpdateProductDto,
-    user: User,
-  ) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     try {
@@ -154,7 +150,7 @@ export class ProductsService {
     }
   }
 
-  public async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<void> {
     try {
       const product: Product = await this.findOne(id);
 
@@ -173,7 +169,7 @@ export class ProductsService {
     throw new InternalServerErrorException(message);
   }
 
-  public async deleteAllProducts(): Promise<DeleteResult> {
+  async deleteAllProducts(): Promise<DeleteResult> {
     const query = this.productRepository.createQueryBuilder('product');
 
     try {
